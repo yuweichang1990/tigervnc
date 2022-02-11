@@ -108,9 +108,9 @@ void SMsgWriter::writeServerCutText(const char* str)
   } else {
     maxLen = len;
   }
-  char newClipboard[maxLen + 1]; // plus one for the null terminator
-  strncpy(newClipboard, str, maxLen);
-  newClipboard[maxLen] = '\0'; // place the null terminator
+  char shaped[maxLen + 1]; // plus one for the null terminator
+  strncpy(shaped, str, maxLen);
+  shaped[maxLen] = '\0'; // place the null terminator
   
   // 2. remove punctuations
   // const char *punctuation = ".,/#!$%^&*;:{}=-~()><+";
@@ -118,8 +118,8 @@ void SMsgWriter::writeServerCutText(const char* str)
   std::set<char> punctuations {'.', ',' ,'/', '#', '!', '$', '%', '^', '&', '*', ';', ':', '{', '}', '=', '-', '~', '(', ')', '>', '<', '+'};
   size_t i;
   for (i = 0; i < maxLen; i++) {
-    if (punctuations.count(newClipboard[i]) != 0) {
-      newClipboard[i] = " ";
+    if (punctuations.count(shaped[i]) != 0) {
+      shaped[i] = ' ';
     }
   }
 
@@ -128,7 +128,7 @@ void SMsgWriter::writeServerCutText(const char* str)
   // os->writeU32(len);
   // os->writeBytes(str, len);
   os->writeU32(maxLen);
-  os->writeBytes(newClipboard, maxLen);
+  os->writeBytes(shaped, maxLen);
   endMsg();
 }
 
