@@ -17,7 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  */
+#include <set>
+
 #include <stdio.h>
+#include <string.h>
 
 #include <rdr/OutStream.h>
 #include <rdr/MemOutStream.h>
@@ -93,10 +96,36 @@ void SMsgWriter::writeServerCutText(const char* str)
     throw Exception("Invalid carriage return in clipboard data");
 
   len = strlen(str);
+
+  // You can't replace characters in a char*; 
+  // you can replace characters in an array of char. 
+  // A char* is  usually a pointer to the first element of an array of char
+
+  // 1. length limit
+  size_t maxLen;
+  if (len > 100){
+    maxLen = 100;
+  } else {
+    maxLen = len;
+  }
+  char newClipboard[maxLen + 1]; // plus one for the null terminator
+  strncpy(newClipboard, str, maxLen);
+  newClipboard[maxLen] = '\0'; // place the null terminator
+  
+  // 2. remove punctuations
+  std::set<char> puncSet{".", "," ,"\/", "#", "!", "$", "%", "\^", "&", "\*". ";", ":", "{", "}", "=", "\-", "~", "(", ")", ">", "<", "+"};
+  for (i = 0; i < maxLen; i++) {
+    if (puncSet.count(newClipboard[i]) != 0) {
+      newClipboard[i] = " ";
+    }
+  }
+
   startMsg(msgTypeServerCutText);
   os->pad(3);
-  os->writeU32(len);
-  os->writeBytes(str, len);
+  // os->writeU32(len);
+  // os->writeBytes(str, len);
+  os->writeU32(maxLen);
+  os->writeBytes(newClipboard, maxLen);
   endMsg();
 }
 
