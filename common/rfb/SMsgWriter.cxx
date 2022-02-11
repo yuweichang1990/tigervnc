@@ -108,8 +108,8 @@ void SMsgWriter::writeServerCutText(const char* str)
   } else {
     maxLen = len;
   }
-  const size_t shapedLen = maxLen + 1
-  char shaped[shapedLen]; // plus one for the null terminator
+  const size_t shapedLen = maxLen + 1;
+  char* shaped = new char[shapedLen](); // plus one for the null terminator
   strncpy(shaped, str, maxLen);
   shaped[maxLen] = '\0'; // place the null terminator
   
