@@ -113,9 +113,12 @@ void SMsgWriter::writeServerCutText(const char* str)
   newClipboard[maxLen] = '\0'; // place the null terminator
   
   // 2. remove punctuations
-  std::set<char> puncSet{".", "," ,"\/", "#", "!", "$", "%", "\^", "&", "\*". ";", ":", "{", "}", "=", "\-", "~", "(", ")", ">", "<", "+"};
+  // const char *punctuation = ".,/#!$%^&*;:{}=-~()><+";
+  // std::set<char> puncSet
+  std::set<char> punctuations {'.', ',' ,'/', '#', '!', '$', '%', '^', '&', '*', ';', ':', '{', '}', '=', '-', '~', '(', ')', '>', '<', '+'};
+  size_t i;
   for (i = 0; i < maxLen; i++) {
-    if (puncSet.count(newClipboard[i]) != 0) {
+    if (punctuations.count(newClipboard[i]) != 0) {
       newClipboard[i] = " ";
     }
   }
