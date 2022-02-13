@@ -57,6 +57,7 @@ namespace rfb {
     // writeBell() does the obvious thing.
     void writeBell();
 
+    char* removeDuplicates(char* original);
     void writeServerCutText(const char* str);
 
     void writeClipboardCaps(rdr::U32 caps, const rdr::U32* lengths);
