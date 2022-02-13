@@ -17,9 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  * USA.
  */
-#include <set>
-#include <string>
-
 #include <stdio.h>
 #include <string.h>
 
@@ -37,6 +34,9 @@
 #include <rfb/SMsgWriter.h>
 #include <rfb/LogWriter.h>
 #include <rfb/ledStates.h>
+
+#include <set>
+#include <string>
 
 #define MAXPHRASELEN 100
 #define MAXTOKLEN 100
