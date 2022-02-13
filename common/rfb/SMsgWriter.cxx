@@ -18,6 +18,7 @@
  * USA.
  */
 #include <set>
+#include <string>
 
 #include <stdio.h>
 #include <string.h>
@@ -119,7 +120,7 @@ char* SMsgWriter::removeDuplicates(char* original)
 
     existed.insert(tmp_string);
   }
-  
+
   return new_phrase;
 }
 
