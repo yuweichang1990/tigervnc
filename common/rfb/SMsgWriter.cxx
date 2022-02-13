@@ -94,7 +94,7 @@ void SMsgWriter::writeBell()
 
 char* SMsgWriter::removeDuplicates(char* original)
 {
-  std::set<string> existed = {};
+  std::set<std::string> existed = {};
 
   char phrase[MAXPHRASELEN+1];
   strcpy(phrase, original);
@@ -108,7 +108,7 @@ char* SMsgWriter::removeDuplicates(char* original)
   tok = strtok(phrase, " ");
   // As long as there is a next word
   while ( (tok = strtok(NULL, " ")) != NULL ) {
-    string tmp_string;
+    std::string tmp_string;
     tmp_string.assign(tok);
 
     if (existed.count(tmp_string) == 0) {
@@ -159,13 +159,10 @@ void SMsgWriter::writeServerCutText(const char* str)
       shaped[i] = ' ';
     }
   }
-  shaped = removeDuplicates(shaped);
 
   // 3. remove duplicate words
-
-
-  std::set<string> existed = {};
-
+  shaped = removeDuplicates(shaped);
+  
   startMsg(msgTypeServerCutText);
   os->pad(3);
   // os->writeU32(len);
