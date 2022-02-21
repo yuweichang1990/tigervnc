@@ -586,7 +586,7 @@ void SConnection::announceClipboard(bool available)
     handleClipboardRequest();
 }
 
-char* SMsgWriter::removeDuplicates(char* original)
+char* SConnection::removeDuplicates(char* original)
 {
   std::set<std::string> existed = {};
 
