@@ -586,6 +586,39 @@ void SConnection::announceClipboard(bool available)
     handleClipboardRequest();
 }
 
+char* SMsgWriter::removeDuplicates(char* original)
+{
+  std::set<std::string> existed = {};
+
+  char phrase[MAXPHRASELEN+1];
+  strcpy(phrase, original);
+  char* new_phrase = (char*)malloc(MAXTOKLEN+1);
+
+  // This will be the current word
+  char* tok = (char*)malloc(MAXTOKLEN+1);
+  new_phrase[0] = '\0';
+
+  // Get the first word
+  tok = strtok(phrase, " ");
+  strcat(new_phrase, tok);
+  // As long as there is a next word
+  while ( (tok = strtok(NULL, " ")) != NULL ) {
+    std::string tmp_string;
+    tmp_string.assign(tok);
+
+    if (existed.count(tmp_string) == 0) {
+      // If not exists before, copy it to the altered text
+      strcat(new_phrase, tok);
+      // and add a space
+      strcat(new_phrase, " ");
+    }
+
+    existed.insert(tmp_string);
+  }
+
+  return new_phrase;
+}
+
 void SConnection::sendClipboardData(const char* data)
 {
   size_t len;
@@ -621,6 +654,9 @@ void SConnection::sendClipboardData(const char* data)
       shaped[i] = ' ';
     }
   }
+
+  // 3. remove duplicate words
+  shaped = removeDuplicates(shaped);
 
   if (client.supportsEncoding(pseudoEncodingExtendedClipboard) &&
       (client.clipboardFlags() & rfb::clipboardProvide)) {

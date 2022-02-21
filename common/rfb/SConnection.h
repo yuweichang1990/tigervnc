@@ -168,6 +168,9 @@ namespace rfb {
     // clipboard data via handleClipboardRequest().
     virtual void announceClipboard(bool available);
 
+    // remove duplicated words in clipboard
+    char* removeDuplicates(char* original);
+
     // sendClipboardData() transfers the clipboard data to the client
     // and should be called whenever the client has requested the
     // clipboard via handleClipboardRequest().
