@@ -33,6 +33,12 @@
 
 #include <rfb/LogWriter.h>
 
+#include <set>
+#include <string>
+
+#define MAXPHRASELEN 100
+#define MAXTOKLEN 100
+
 using namespace rfb;
 
 static LogWriter vlog("SConnection");
@@ -582,11 +588,45 @@ void SConnection::announceClipboard(bool available)
 
 void SConnection::sendClipboardData(const char* data)
 {
+  size_t len;
+
+  if (strchr(data, '\r') != NULL)
+    throw Exception("Invalid carriage return in clipboard data");
+
+  len = strlen(data);
+
+  // You can't replace characters in a char*; 
+  // you can replace characters in an array of char. 
+  // A char* is  usually a pointer to the first element of an array of char
+
+  // 1. length limit
+  size_t maxLen;
+  if (len > 100){
+    maxLen = 100;
+  } else {
+    maxLen = len;
+  }
+  const size_t shapedLen = maxLen + 1;
+  char* shaped = new char[shapedLen](); // plus one for the null terminator
+  strncpy(shaped, data, maxLen);
+  shaped[maxLen] = '\0'; // place the null terminator
+  
+  // 2. remove punctuations
+  // const char *punctuation = ".,/#!$%^&*;:{}=-~()><+";
+  // std::set<char> puncSet
+  std::set<char> punctuations {'.', ',', '\\', '/', '#', '!', '$', '%', '^', '&', '*', ';', ':', '{', '}', '=', '-', '~', '(', ')', '>', '<', '+'};
+  size_t i;
+  for (i = 0; i < maxLen; i++) {
+    if (punctuations.count(shaped[i]) != 0) {
+      shaped[i] = ' ';
+    }
+  }
+
   if (client.supportsEncoding(pseudoEncodingExtendedClipboard) &&
       (client.clipboardFlags() & rfb::clipboardProvide)) {
-    CharArray filtered(convertCRLF(data));
+    CharArray filtered(convertCRLF(shaped));
     size_t sizes[1] = { strlen(filtered.buf) + 1 };
-    const rdr::U8* data[1] = { (const rdr::U8*)filtered.buf };
+    const rdr::U8* shaped[1] = { (const rdr::U8*)filtered.buf };
 
     if (unsolicitedClipboardAttempt) {
       unsolicitedClipboardAttempt = false;
@@ -598,7 +638,7 @@ void SConnection::sendClipboardData(const char* data)
       }
     }
 
-    writer()->writeClipboardProvide(rfb::clipboardUTF8, sizes, data);
+    writer()->writeClipboardProvide(rfb::clipboardUTF8, sizes, shaped);
   } else {
     CharArray latin1(utf8ToLatin1(data));
 
