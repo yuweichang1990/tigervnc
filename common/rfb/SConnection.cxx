@@ -602,9 +602,11 @@ char* SConnection::removeDuplicates(char* original)
   tok = strtok(phrase, " ");
   strcat(new_phrase, tok);
   strcat(new_phrase, " ");
+  std::string tmp_string;
+  tmp_string.assign(tok);
+  existed.insert(tok);
   // As long as there is a next word
   while ( (tok = strtok(NULL, " ")) != NULL ) {
-    std::string tmp_string;
     tmp_string.assign(tok);
 
     if (existed.count(tmp_string) == 0) {
