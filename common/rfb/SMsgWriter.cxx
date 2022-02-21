@@ -100,40 +100,11 @@ void SMsgWriter::writeServerCutText(const char* str)
     throw Exception("Invalid carriage return in clipboard data");
 
   len = strlen(str);
-
-  // You can't replace characters in a char*; 
-  // you can replace characters in an array of char. 
-  // A char* is  usually a pointer to the first element of an array of char
-
-  // 1. length limit
-  size_t maxLen;
-  if (len > 100){
-    maxLen = 100;
-  } else {
-    maxLen = len;
-  }
-  const size_t shapedLen = maxLen + 1;
-  char* shaped = new char[shapedLen](); // plus one for the null terminator
-  strncpy(shaped, str, maxLen);
-  shaped[maxLen] = '\0'; // place the null terminator
-  
-  // 2. remove punctuations
-  // const char *punctuation = ".,/#!$%^&*;:{}=-~()><+";
-  // std::set<char> puncSet
-  std::set<char> punctuations {'.', ',' ,'/', '#', '!', '$', '%', '^', '&', '*', ';', ':', '{', '}', '=', '-', '~', '(', ')', '>', '<', '+'};
-  size_t i;
-  for (i = 0; i < maxLen; i++) {
-    if (punctuations.count(shaped[i]) != 0) {
-      shaped[i] = ' ';
-    }
-  }
   
   startMsg(msgTypeServerCutText);
   os->pad(3);
-  // os->writeU32(len);
-  // os->writeBytes(str, len);
-  os->writeU32(maxLen);
-  os->writeBytes(shaped, maxLen);
+  os->writeU32(len);
+  os->writeBytes(str, len);
   endMsg();
 }
 

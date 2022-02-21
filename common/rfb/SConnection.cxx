@@ -601,6 +601,7 @@ char* SConnection::removeDuplicates(char* original)
   // Get the first word
   tok = strtok(phrase, " ");
   strcat(new_phrase, tok);
+  strcat(new_phrase, " ");
   // As long as there is a next word
   while ( (tok = strtok(NULL, " ")) != NULL ) {
     std::string tmp_string;
@@ -676,7 +677,7 @@ void SConnection::sendClipboardData(const char* data)
 
     writer()->writeClipboardProvide(rfb::clipboardUTF8, sizes, shaped);
   } else {
-    CharArray latin1(utf8ToLatin1(data));
+    CharArray latin1(utf8ToLatin1(shaped));
 
     writer()->writeServerCutText(latin1.buf);
   }
