@@ -600,26 +600,32 @@ char* SConnection::removeDuplicates(char* original)
 
   // Get the first word
   tok = strtok(phrase, " ");
-  strcat(new_phrase, tok);
-  strcat(new_phrase, " ");
-  std::string tmp_string;
-  tmp_string.assign(tok);
-  existed.insert(tok);
-  // As long as there is a next word
-  while ( (tok = strtok(NULL, " ")) != NULL ) {
+  // Check if the first word exist
+  if (tok != NULL) {
+    strcat(new_phrase, tok);
+    strcat(new_phrase, " ");
+    std::string tmp_string;
     tmp_string.assign(tok);
+    existed.insert(tok);
+    // As long as there is a next word
+    while ( (tok = strtok(NULL, " ")) != NULL ) {
+      tmp_string.assign(tok);
 
-    if (existed.count(tmp_string) == 0) {
-      // If not exists before, copy it to the altered text
-      strcat(new_phrase, tok);
-      // and add a space
-      strcat(new_phrase, " ");
+      if (existed.count(tmp_string) == 0) {
+        // If not exists before, copy it to the altered text
+        strcat(new_phrase, tok);
+        // and add a space
+        strcat(new_phrase, " ");
+      }
+
+      existed.insert(tmp_string);
     }
 
-    existed.insert(tmp_string);
+    return new_phrase;
+  } else {
+    return original;
   }
 
-  return new_phrase;
 }
 
 void SConnection::sendClipboardData(const char* data)
