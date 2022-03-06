@@ -645,12 +645,10 @@ char* SConnection::removeDuplicates(char* original)
 
 void SConnection::sendClipboardData(const char* data)
 {
-  size_t len;
-
   if (strchr(data, '\r') != NULL)
     throw Exception("Invalid carriage return in clipboard data");
 
-  len = strlen(data);
+  const size_t len = strlen(data);
 
   // You can't replace characters in a char*; 
   // you can replace characters in an array of char. 
