@@ -37,7 +37,6 @@
 #include <string>
 
 #define MAXPHRASELEN 100
-#define MAXTOKLEN 100
 
 using namespace rfb;
 
@@ -588,14 +587,12 @@ void SConnection::announceClipboard(bool available)
 
 char* SConnection::removeDuplicates(char* original)
 {
-  const size_t len = strlen(original);
-
   // Add 1 for \0
-  char phrase[len+1];
+  char phrase[MAXPHRASELEN+1];
   strcpy(phrase, original);
 
   // This will be the current word
-  char* tok = (char*)malloc(len+1);
+  char* tok = (char*)malloc(MAXPHRASELEN+1);
   
   // Get the first word
   tok = strtok(phrase, " ");
@@ -604,7 +601,7 @@ char* SConnection::removeDuplicates(char* original)
     std::set<std::string> existed = {};
 
     // Add 1 for \0 and one for additional white space after chaining the tokens
-    char* new_phrase = (char*)malloc(len+2);
+    char* new_phrase = (char*)malloc(MAXPHRASELEN+2);
     new_phrase[0] = '\0';
 
     strcat(new_phrase, tok);
