@@ -626,13 +626,11 @@ char* SConnection::removeDuplicates(char* original)
     // clean up
     existed.clear();
     free(tok);
-    free(phrase);
 
     return new_phrase;
   } else {
     // clean up
     free(tok);
-    free(phrase);
 
     return original;
   }
