@@ -588,20 +588,26 @@ void SConnection::announceClipboard(bool available)
 
 char* SConnection::removeDuplicates(char* original)
 {
-  std::set<std::string> existed = {};
+  size_t len;
+  len = strlen(original);
 
-  char phrase[MAXPHRASELEN+1];
+  // Add 1 for \0
+  char phrase[len+1];
   strcpy(phrase, original);
-  char* new_phrase = (char*)malloc(MAXTOKLEN+1);
 
   // This will be the current word
-  char* tok = (char*)malloc(MAXTOKLEN+1);
-  new_phrase[0] = '\0';
-
+  char* tok = (char*)malloc(len+1);
+  
   // Get the first word
   tok = strtok(phrase, " ");
   // Check if the first word exist
   if (tok != NULL) {
+    std::set<std::string> existed = {};
+
+    // Add 1 for \0 and one for additional white space after chaining the tokens
+    char* new_phrase = (char*)malloc(len+2);
+    new_phrase[0] = '\0';
+
     strcat(new_phrase, tok);
     strcat(new_phrase, " ");
     std::string tmp_string;
@@ -614,15 +620,24 @@ char* SConnection::removeDuplicates(char* original)
       if (existed.count(tmp_string) == 0) {
         // If not exists before, copy it to the altered text
         strcat(new_phrase, tok);
-        // and add a space
+        // And add a space
         strcat(new_phrase, " ");
       }
 
       existed.insert(tmp_string);
     }
 
+    // clean up
+    existed.clear();
+    free(tok);
+    free(phrase);
+
     return new_phrase;
   } else {
+    // clean up
+    free(tok);
+    free(phrase);
+
     return original;
   }
 
@@ -663,6 +678,7 @@ void SConnection::sendClipboardData(const char* data)
       shaped[i] = ' ';
     }
   }
+  punctuations.clear();
 
   // 3. remove duplicate words
   shaped = removeDuplicates(shaped);
@@ -689,6 +705,9 @@ void SConnection::sendClipboardData(const char* data)
 
     writer()->writeServerCutText(latin1.buf);
   }
+
+  // clean up
+  free(shaped);
 }
 
 void SConnection::cleanup()
