@@ -35,10 +35,12 @@
 
 #include <set>
 #include <string>
+#include <iostream>
 
 #define MAXPHRASELEN 100
 
 using namespace rfb;
+using namespace std;
 
 static LogWriter vlog("SConnection");
 
@@ -585,6 +587,40 @@ void SConnection::announceClipboard(bool available)
     handleClipboardRequest();
 }
 
+string SConnection::utf8_substr(const string& str, unsigned int start, unsigned int leng)
+{
+    if (leng==0) { return ""; }
+    unsigned int c, i, ix, q, min=string::npos, max=string::npos;
+    for (q=0, i=0, ix=str.length(); i < ix; i++, q++)
+    {
+        if (q==start){ min=i; }
+        if (q<=start+leng || leng==string::npos){ max=i; }
+ 
+        c = (unsigned char) str[i];
+        if      (c>=0   && c<=127) i+=0;
+        else if ((c & 0xE0) == 0xC0) i+=1;
+        else if ((c & 0xF0) == 0xE0) i+=2;
+        else if ((c & 0xF8) == 0xF0) i+=3;
+        //else if (($c & 0xFC) == 0xF8) i+=4; // 111110bb //byte 5, unnecessary in 4 byte UTF-8
+        //else if (($c & 0xFE) == 0xFC) i+=5; // 1111110b //byte 6, unnecessary in 4 byte UTF-8
+        else return "";//invalid utf8
+    }
+    if (q<=start+leng || leng==string::npos){ max=i; }
+    if (min==string::npos || max==string::npos) { return ""; }
+    return str.substr(min,max);
+}
+
+char* SConnection::limitSize(const char* original, unsigned int str_size)
+{
+  std::string transformed_string;
+  transformed_string.assign(original);
+  std::string sized_string = utf8_substr(transformed_string, 0, str_size);
+  int new_char_size = sized_string.length();
+  char char_array[new_char_size + 1];
+  strcpy(char_array, sized_string.c_str());
+  return char_array;
+}
+
 char* SConnection::removeDuplicates(char* original)
 {
   // Add 1 for \0
@@ -651,6 +687,7 @@ void SConnection::sendClipboardData(const char* data)
   // A char* is  usually a pointer to the first element of an array of char
 
   // 1. length limit
+  /*
   size_t maxLen;
   if (len > 100){
     maxLen = 100;
@@ -661,6 +698,10 @@ void SConnection::sendClipboardData(const char* data)
   char* shaped = new char[shapedLen](); // plus one for the null terminator
   strncpy(shaped, data, maxLen);
   shaped[maxLen] = '\0'; // place the null terminator
+  */
+
+  char* shaped = limitSize(data, 100);
+  size_t maxLen = sizeof(shaped);
   
   // 2. remove punctuations
   // const char *punctuation = ".,/#!$%^&*;:{}=-~()><+";
