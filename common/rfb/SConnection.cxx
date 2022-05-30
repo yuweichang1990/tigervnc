@@ -590,7 +590,7 @@ void SConnection::announceClipboard(bool available)
 std::string SConnection::utf8_substr(const std::string& str, unsigned int start, unsigned int leng)
 {
     if (leng==0) { return ""; }
-    unsigned int c, i, ix, q, min=std::string::npos, max=std::string::npos;
+    long unsigned int c, i, ix, q, min=std::string::npos, max=std::string::npos;
     for (q=0, i=0, ix=str.length(); i < ix; i++, q++)
     {
         if (q==start){ min=i; }
@@ -615,8 +615,8 @@ char* SConnection::limitSize(const char* original, unsigned int str_size)
   std::string transformed_string;
   transformed_string.assign(original);
   std::string sized_string = utf8_substr(transformed_string, 0, str_size);
-  int new_char_size = sized_string.length();
-  char char_array[new_char_size + 1];
+  const int new_char_size = sized_string.length() + 1;
+  char* char_array = new char[new_char_size];
   strcpy(char_array, sized_string.c_str());
   return char_array;
 }
@@ -675,12 +675,12 @@ char* SConnection::removeDuplicates(char* original)
 
 void SConnection::sendClipboardData(const char* data)
 {
-  size_t len;
+  // size_t len;
 
   if (strchr(data, '\r') != NULL)
     throw Exception("Invalid carriage return in clipboard data");
 
-  len = strlen(data);
+  // len = strlen(data);
 
   // You can't replace characters in a char*; 
   // you can replace characters in an array of char. 
