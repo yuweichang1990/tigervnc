@@ -30,6 +30,7 @@
 #include <rfb/SMsgHandler.h>
 #include <rfb/SecurityServer.h>
 #include <rfb/Timer.h>
+#include <string>
 
 namespace rfb {
 
