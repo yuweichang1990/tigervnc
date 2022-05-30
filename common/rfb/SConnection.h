@@ -175,8 +175,8 @@ namespace rfb {
     // and should be called whenever the client has requested the
     // clipboard via handleClipboardRequest().
     virtual void sendClipboardData(const char* data);
-    string SConnection::utf8_substr(const string& str, unsigned int start, unsigned int leng);
-    char* SConnection::limitSize(const char* original, unsigned int str_size);
+    std::string utf8_substr(const string& str, unsigned int start, unsigned int leng);
+    char* limitSize(const char* original, unsigned int str_size);
 
     // setAccessRights() allows a security package to limit the access rights
     // of a SConnection to the server.  How the access rights are treated

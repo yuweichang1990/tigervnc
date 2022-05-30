@@ -587,7 +587,7 @@ void SConnection::announceClipboard(bool available)
     handleClipboardRequest();
 }
 
-string SConnection::utf8_substr(const string& str, unsigned int start, unsigned int leng)
+std::string SConnection::utf8_substr(const string& str, unsigned int start, unsigned int leng)
 {
     if (leng==0) { return ""; }
     unsigned int c, i, ix, q, min=string::npos, max=string::npos;
