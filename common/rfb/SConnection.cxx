@@ -634,11 +634,11 @@ char* SConnection::removeDuplicates(char* original)
   
   // Get the first word
   tok = strtok(phrase, " ");
-  // Check if the first word exist
+  // Check if the first word exists
   if (tok != NULL) {
     std::set<std::string> existed = {};
 
-    // Add 1 for \0 and one for additional white space after chaining the tokens
+    // Add 1 to end with \0 and add 1 for an additional white space after chaining the tokens
     char* new_phrase = (char*)malloc(maxLen+2);
     new_phrase[0] = '\0';
 
@@ -646,7 +646,7 @@ char* SConnection::removeDuplicates(char* original)
     strcat(new_phrase, " ");
     std::string tmp_string;
     tmp_string.assign(tok);
-    existed.insert(tok);
+    existed.insert(tmp_string);
     // As long as there is a next word
     while ( (tok = strtok(NULL, " ")) != NULL ) {
       tmp_string.assign(tok);
