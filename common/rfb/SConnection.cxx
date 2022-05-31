@@ -623,7 +623,7 @@ char* SConnection::limitSize(const char* original, unsigned int str_size)
 
 char* SConnection::removeDuplicates(char* original)
 {
-  size_t maxLen = sizeof(original);
+  const size_t maxLen = sizeof(original);
 
   // Add 1 for \0
   char phrase[maxLen+1];
